@@ -1,17 +1,17 @@
-import { Canvas } from './utils/Canvas';
+import { Workspace } from './utils/Workspace';
 import { Layers } from './utils/Layers';
 import { Manager } from './managers/Manager';
+import { WorkspaceController } from './controllers/WorkspaceController';
 
-// window['canvas'] = new Canvas().init();
+let wsController: WorkspaceController = new WorkspaceController();
+let workspaces: Manager<Workspace> = new Manager<Workspace>();
 
-let canvases: Manager<Canvas> = new Manager<Canvas>();
+wsController.setWorkspaceManager(workspaces);
 
-canvases.add(new Canvas('one', 100, 100));
-canvases.add(new Canvas('two', 200, 200));
-canvases.add(new Canvas('three', 300, 300));
+workspaces.add(new Workspace('one', 100, 100));
+workspaces.add(new Workspace('two', 200, 200));
+workspaces.add(new Workspace('three', 300, 300));
 
-canvases.items.forEach(canvas => {
-    canvas.createTab();
+workspaces.items.forEach(workspace => {
+    wsController.createWorkspace(workspace);
 });
-
-// window['layers'] = new Layers().init(layers);

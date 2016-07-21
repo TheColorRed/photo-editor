@@ -315,17 +315,110 @@ module.exports = 0;
 
 },{}],10:[function(require,module,exports){
 "use strict";
-var Canvas_1 = require('./utils/Canvas');
+var WorkspaceController = (function () {
+    function WorkspaceController() {
+    }
+    WorkspaceController.prototype.setWorkspaceManager = function (wsManager) {
+        this.wsManager = wsManager;
+    };
+    WorkspaceController.prototype.createWorkspace = function (workspace) {
+        var tabs = document.querySelector('section.areas div.tabs');
+        var workspaces = document.querySelector('section.areas div.workspaces');
+        var workspaceTab = document.createElement('a');
+        workspaceTab.classList.add('workspace-tab');
+        workspaceTab.setAttribute('data-id', workspace.id);
+        workspaceTab.innerHTML = "<span>" + workspace.title + "</span><span><i class=\"fa fa-close\"></i></span>";
+        var $this = this;
+        workspaceTab.addEventListener('click', function (e) {
+            var target = e.currentTarget;
+            $this.focusWorkspace(target.getAttribute('data-id'));
+        });
+        workspaceTab.querySelector('span:last-child').addEventListener('click', function (e) {
+            e.stopPropagation();
+            var target = e.currentTarget;
+            $this.removeWorkspace(target.parentElement.getAttribute('data-id'));
+        });
+        var workspaceArea = document.createElement('div');
+        workspaceArea.classList.add('hidden');
+        workspaceArea.classList.add('workspace-area');
+        workspaceArea.setAttribute('data-id', workspace.id);
+        var transCanvas = document.createElement('canvas');
+        transCanvas.width = workspace.width;
+        transCanvas.height = workspace.height;
+        transCanvas.classList.add('transparent');
+        this.setTransImage(transCanvas);
+        var canvas = document.createElement('canvas');
+        canvas.width = workspace.width;
+        canvas.height = workspace.height;
+        workspaceArea.appendChild(transCanvas);
+        workspaceArea.appendChild(canvas);
+        workspaces.appendChild(workspaceArea);
+        tabs.appendChild(workspaceTab);
+        this.focusWorkspace(workspace.id);
+    };
+    WorkspaceController.prototype.setTransImage = function (canvas) {
+        var img = new Image();
+        img.src = '../../images/transparent.png';
+        img.onload = function () {
+            var context = canvas.getContext('2d');
+            var pattern = context.createPattern(img, 'repeat');
+            context.fillStyle = pattern;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        };
+    };
+    WorkspaceController.prototype.focusWorkspace = function (id) {
+        var tabs = document.querySelectorAll('.workspace-tab');
+        for (var i = 0; i < tabs.length; i++) {
+            var tab = tabs.item(i);
+            tab.classList.remove('active');
+        }
+        var areas = document.querySelectorAll('.workspace-area');
+        for (var i = 0; i < areas.length; i++) {
+            var area = areas.item(i);
+            area.classList.add('hidden');
+        }
+        var wsa = document.querySelector(".workspace-area[data-id=\"" + id + "\"]");
+        var wst = document.querySelector(".workspace-tab[data-id=\"" + id + "\"]");
+        wsa.classList.remove('hidden');
+        wst.classList.add('active');
+    };
+    WorkspaceController.prototype.removeWorkspace = function (id) {
+        for (var i in this.wsManager.items) {
+            var item = this.wsManager.items[i];
+            if (item.id == id) {
+                if (item.isDirty) {
+                    alert('Workspace is dirty');
+                    return;
+                }
+                var wsa = document.querySelector(".workspace-area[data-id=\"" + id + "\"]");
+                var wst = document.querySelector(".workspace-tab[data-id=\"" + id + "\"]");
+                wsa.parentNode.removeChild(wsa);
+                wst.parentNode.removeChild(wst);
+                this.wsManager.remove(item);
+                return;
+            }
+        }
+    };
+    return WorkspaceController;
+}());
+exports.WorkspaceController = WorkspaceController;
+
+},{}],11:[function(require,module,exports){
+"use strict";
+var Workspace_1 = require('./utils/Workspace');
 var Manager_1 = require('./managers/Manager');
-var canvases = new Manager_1.Manager();
-canvases.add(new Canvas_1.Canvas('one', 100, 100));
-canvases.add(new Canvas_1.Canvas('two', 200, 200));
-canvases.add(new Canvas_1.Canvas('three', 300, 300));
-canvases.items.forEach(function (canvas) {
-    canvas.createTab();
+var WorkspaceController_1 = require('./controllers/WorkspaceController');
+var wsController = new WorkspaceController_1.WorkspaceController();
+var workspaces = new Manager_1.Manager();
+wsController.setWorkspaceManager(workspaces);
+workspaces.add(new Workspace_1.Workspace('one', 100, 100));
+workspaces.add(new Workspace_1.Workspace('two', 200, 200));
+workspaces.add(new Workspace_1.Workspace('three', 300, 300));
+workspaces.items.forEach(function (workspace) {
+    wsController.createWorkspace(workspace);
 });
 
-},{"./managers/Manager":11,"./utils/Canvas":12}],11:[function(require,module,exports){
+},{"./controllers/WorkspaceController":10,"./managers/Manager":12,"./utils/Workspace":13}],12:[function(require,module,exports){
 "use strict";
 var Manager = (function () {
     function Manager() {
@@ -346,7 +439,7 @@ var Manager = (function () {
     };
     Manager.prototype.remove = function (item) {
         if (this.contains(item)) {
-            this._items.slice(this._items.indexOf(item), 1);
+            this._items.splice(this._items.indexOf(item), 1);
         }
         return this;
     };
@@ -357,93 +450,66 @@ var Manager = (function () {
 }());
 exports.Manager = Manager;
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 var Manager_1 = require('../managers/Manager');
 var shortid = require('shortid');
-var Canvas = (function () {
-    function Canvas(title, width, height) {
-        this.title = '';
-        this.width = 400;
-        this.height = 400;
+var Workspace = (function () {
+    function Workspace(title, width, height) {
+        this._title = '';
+        this._isDirty = false;
+        this._width = 1;
+        this._height = 1;
         this._layers = new Manager_1.Manager();
-        this.title = title;
-        this.width = width;
-        this.height = height;
-        this.id = shortid.generate();
+        this._title = title;
+        this._width = width;
+        this._height = height;
+        this._id = shortid.generate();
     }
-    Object.defineProperty(Canvas.prototype, "layers", {
+    Object.defineProperty(Workspace.prototype, "id", {
+        get: function () {
+            return this._id;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Workspace.prototype, "title", {
+        get: function () {
+            return this._title;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Workspace.prototype, "isDirty", {
+        get: function () {
+            return this._isDirty;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Workspace.prototype, "width", {
+        get: function () {
+            return this._width;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Workspace.prototype, "height", {
+        get: function () {
+            return this._height;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Workspace.prototype, "layers", {
         get: function () {
             return this._layers;
         },
         enumerable: true,
         configurable: true
     });
-    Canvas.prototype.createTab = function () {
-        var tabs = document.querySelector('section.areas div.tabs');
-        var workspaces = document.querySelector('section.areas div.workspaces');
-        var workspaceTab = document.createElement('a');
-        workspaceTab.classList.add('workspace-tab');
-        workspaceTab.setAttribute('data-id', this.id);
-        workspaceTab.innerHTML = "<span>" + this.title + "</span><span><i class=\"fa fa-close\"></i></span>";
-        workspaceTab.addEventListener('click', this.focusWorkspace);
-        var workspaceTabText = document.createElement('span');
-        workspaceTabText.innerText = this.title;
-        var workspaceTabClose = document.createElement('span');
-        var workspaceArea = document.createElement('div');
-        workspaceArea.classList.add('hidden');
-        workspaceArea.classList.add('workspace-area');
-        workspaceArea.setAttribute('data-id', this.id);
-        var transCanvas = document.createElement('canvas');
-        transCanvas.width = this.width;
-        transCanvas.height = this.height;
-        transCanvas.classList.add('transparent');
-        this.setTransImage(transCanvas);
-        var canvas = document.createElement('canvas');
-        canvas.width = this.width;
-        canvas.height = this.height;
-        workspaceArea.appendChild(transCanvas);
-        workspaceArea.appendChild(canvas);
-        workspaces.appendChild(workspaceArea);
-        tabs.appendChild(workspaceTab);
-    };
-    Canvas.prototype.removeTab = function () {
-    };
-    Canvas.prototype.setTransImage = function (canvas) {
-        var img = new Image();
-        img.src = '../images/transparent.png';
-        img.onload = function () {
-            var context = canvas.getContext('2d');
-            var pattern = context.createPattern(img, 'repeat');
-            context.fillStyle = pattern;
-            context.fillRect(0, 0, canvas.width, canvas.height);
-        };
-    };
-    Canvas.prototype.focusTab = function (target) {
-        var tabs = document.querySelectorAll('.workspace-tab');
-        for (var i = 0; i < tabs.length; i++) {
-            var tab = tabs.item(i);
-            tab.classList.remove('active');
-        }
-        target.classList.add('active');
-    };
-    Canvas.prototype.focusWorkspaceArea = function (id) {
-        var areas = document.querySelectorAll('.workspace-area');
-        for (var i = 0; i < areas.length; i++) {
-            var tab = areas.item(i);
-            tab.classList.add('hidden');
-        }
-        var wsa = document.querySelector(".workspace-area[data-id=\"" + id + "\"]");
-        wsa.classList.remove('hidden');
-    };
-    Canvas.prototype.focusWorkspace = function (e) {
-        var target = e.target;
-        var id = target.getAttribute('data-id');
-        this.focusTab(target);
-        this.focusWorkspaceArea(id);
-    };
-    return Canvas;
+    return Workspace;
 }());
-exports.Canvas = Canvas;
+exports.Workspace = Workspace;
 
-},{"../managers/Manager":11,"shortid":1}]},{},[10]);
+},{"../managers/Manager":12,"shortid":1}]},{},[11]);

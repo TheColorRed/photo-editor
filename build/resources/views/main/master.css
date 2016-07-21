@@ -106,12 +106,17 @@ a.workspace-tab > span:first-child {
     line-height: 22px;
 }
 
+a.workspace-tab:hover span:last-child,
+a.workspace-tab.active span:last-child {
+    display: inline-block;
+}
+
 a.workspace-tab > span:last-child {
     float: right;
     padding: 1px 2px;
     border-radius: 2px;
     padding: 5px;
-    display: inline-block;
+    display: none;
 }
 a.workspace-tab > span:last-child:hover {
     background: #1c1c1c;

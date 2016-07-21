@@ -15,7 +15,7 @@ export class Manager<T> {
 
     public remove(item: T): this {
         if (this.contains(item)) {
-            this._items.slice(this._items.indexOf(item), 1);
+            this._items.splice(this._items.indexOf(item), 1);
         }
         return this;
     }
