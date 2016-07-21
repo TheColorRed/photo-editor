@@ -1,0 +1,25 @@
+{
+  "name": "photo-editor",
+  "version": "1.0.0",
+  "description": "Photo Editing",
+  "main": "build/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "electron-prebuilt": "^1.2.7",
+    "font-awesome": "^4.6.3",
+    "shortid": "^2.2.6",
+    "typescript": "^1.8.10"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.1",
+    "gulp": "^3.9.1",
+    "gulp-tsc": "^1.2.0",
+    "tsify": "^1.0.1",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}
