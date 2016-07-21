@@ -15,14 +15,14 @@ gulp.task('build-client', () => {
         })
         .pipe(source('client.js'))
         .pipe(buffer())
-        .pipe(gulp.dest('build/'));
+        .pipe(gulp.dest('build/client/'));
 });
 
 gulp.task('build-server', () => {
     return gulp
-        .src(['./src/server/main.ts'])
+        .src(['./src/server/app.ts'])
         .pipe(tsc())
-        .pipe(gulp.dest('build/'));
+        .pipe(gulp.dest('build/server/'));
 });
 
 gulp.task('build', ['build-client', 'build-server']);

@@ -1,0 +1,62 @@
+<html>
+
+<head>
+    <title>New File</title>
+    <link rel="stylesheet" href="../styles/master.css">
+    <link rel="stylesheet" href="../styles/newFile.css">
+    <link rel="stylesheet" href="../../../node_modules/font-awesome/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="full-height panel box-container">
+        <div class="row">
+            <div class="col-8">
+                <div class="row bottom-margin">
+                    <div class="col-3">
+                        <label for="workspace-name">Name:</label>
+                    </div>
+                    <div class="col-9">
+                        <input type="text" name="name" id="workspace-name">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <fieldset>
+                            <legend>
+                                Preset:
+                                <select name="" id="">
+                                <option value="">Clipboard</option>
+                                <option value=""></option>
+                                <option value=""></option>
+                                <option value=""></option>
+                                <option value=""></option>
+                            </select>
+                            </legend>
+                            <div class="row bottom-margin">
+                                <div class="col-4 text-right"><label for="width">Width:</label></div>
+                                <div class="col-3 "><input type="text" class="number" id="width"></div>
+                            </div>
+                            <div class="row bottom-margin">
+                                <div class="col-4 text-right"><label for="height">Height:</label></div>
+                                <div class="col-3 "><input type="text" class="number" id="height"></div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-12 bottom-margin">
+                        <input class="btn btn-block" type="button" value="OK">
+                    </div>
+                    <div class="col-12 bottom-margin">
+                        <input class="btn btn-block" type="button" value="Reset">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../../client/controllers/newFile.js"></script>
+</body>
+
+</html>
