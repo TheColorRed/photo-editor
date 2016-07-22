@@ -1,19 +1,23 @@
 "use strict";
-var electron = require('electron');
+const electron = require('electron');
 var app = electron.app;
 var BrowserWindow = electron.BrowserWindow;
+var dialog = electron.dialog;
 var ipc = electron.ipcMain;
-app.on('ready', function () {
+app.on('ready', () => {
     var mainWindow = new BrowserWindow({
         width: 1024,
         height: 600,
         show: false
     });
-    mainWindow.loadURL(__dirname + "/../resources/views/index.html");
-    mainWindow.on('ready-to-show', function () {
+    mainWindow.loadURL(`file://${__dirname}/../resources/views/index.html`);
+    mainWindow.on('ready', () => {
         mainWindow.show();
     });
-    ipc.on('new-file', function () {
+    mainWindow.on('ready-to-show', () => {
+        mainWindow.show();
+    });
+    ipc.on('new-file', () => {
         var newFileWindow = new BrowserWindow({
             width: 500,
             height: 300,
@@ -23,17 +27,27 @@ app.on('ready', function () {
             resizable: false,
             show: false
         });
-        newFileWindow.loadURL(__dirname + "/../resources/views/newFile.html");
+        newFileWindow.loadURL(`file://${__dirname}/../resources/views/newFile.html`);
         newFileWindow.setMenu(null);
-        newFileWindow.on('ready-to-show', function () {
+        newFileWindow.on('ready-to-show', () => {
             newFileWindow.show();
-            newFileWindow.webContents.openDevTools();
         });
     });
-    ipc.on('quit', function () {
+    ipc.on('open-file', (event) => {
+        dialog.showOpenDialog(mainWindow, {
+            title: "Open Image",
+            filters: [
+                { name: 'Images', extensions: ['png', 'jpg', 'gif', 'pdd'] }
+            ],
+            properties: ["multiSelections", "openFile"]
+        }, files => {
+            event.sender.send('opened-files', files);
+        });
+    });
+    ipc.on('quit', () => {
         mainWindow.close();
     });
-    ipc.on('dev-tools', function () {
+    ipc.on('dev-tools', () => {
         mainWindow.webContents.openDevTools();
     });
 });

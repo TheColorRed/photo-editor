@@ -1,8 +1,34 @@
 import electron = require('electron');
+import path = require('path');
+
+import { Workspace } from '../../client/utils/Workspace';
+import { Layers } from '../../client/utils/Layers';
+import { Manager } from '../../client/managers/Manager';
+import { WorkspaceController } from '../../client/controllers/WorkspaceController';
 
 var remote = electron.remote;
-var ipc = remote.ipcMain;
+var ipc = electron.ipcRenderer;
 var Menu = remote.Menu;
+
+let wsController: WorkspaceController = new WorkspaceController();
+let workspaces: Manager<Workspace> = new Manager<Workspace>();
+wsController.setWorkspaceManager(workspaces);
+
+ipc.on('opened-files', (e, files: string[]) => {
+    files.forEach(file => {
+        let ws = new Workspace(path.basename(file));
+        ws.setImage(file).then(loaded => {
+            workspaces.add(ws);
+            wsController.createWorkspace(ws);
+        });
+    });
+});
+
+var scaller = document.querySelector('.workspace-settings .scale') as HTMLElement;
+scaller.addEventListener('change', (e) => {
+    var target = e.currentTarget as HTMLSelectElement;
+
+})
 
 var menu = Menu.buildFromTemplate([
     {
@@ -12,12 +38,15 @@ var menu = Menu.buildFromTemplate([
                 label: 'New...',
                 accelerator: 'ctrl+n',
                 click: () => {
-                    ipc.emit('new-file');
+                    ipc.send('new-file');
                 }
             },
             {
                 label: 'Open...',
-                accelerator: 'ctrl+o'
+                accelerator: 'ctrl+o',
+                click: () => {
+                    ipc.send('open-file');
+                }
             },
             {
                 label: 'Open Recent'
@@ -55,7 +84,7 @@ var menu = Menu.buildFromTemplate([
                 label: 'Quit',
                 accelerator: 'ctrl+q',
                 click: () => {
-                    ipc.emit('quit');
+                    ipc.send('quit');
                 }
             }
         ]
@@ -101,7 +130,7 @@ var menu = Menu.buildFromTemplate([
                 label: 'Developer Tools',
                 accelerator: 'f12',
                 click: () => {
-                    ipc.emit('dev-tools');
+                    ipc.send('dev-tools');
                 }
             }
         ]

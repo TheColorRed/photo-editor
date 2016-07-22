@@ -21,7 +21,11 @@ export class WorkspaceController {
         var $this = this;
         workspaceTab.addEventListener('click', (e) => {
             let target: HTMLAnchorElement = e.currentTarget as HTMLAnchorElement;
-            $this.focusWorkspace(target.getAttribute('data-id'));
+            if (e.button == 1) {
+                $this.removeWorkspace(target.getAttribute('data-id'));
+            } else {
+                $this.focusWorkspace(target.getAttribute('data-id'));
+            }
         });
         workspaceTab.querySelector('span:last-child').addEventListener('click', (e) => {
             e.stopPropagation();
@@ -37,19 +41,37 @@ export class WorkspaceController {
 
         // Create the workspace transparent canvas
         let transCanvas: HTMLCanvasElement = document.createElement('canvas') as HTMLCanvasElement;
-        transCanvas.width = workspace.width;
-        transCanvas.height = workspace.height;
+        transCanvas.width = workspace.width * workspace.scale;
+        transCanvas.height = workspace.height * workspace.scale;
         transCanvas.classList.add('transparent');
         this.setTransImage(transCanvas);
 
         // Create the workspace master canvas
         let canvas: HTMLCanvasElement = document.createElement('canvas') as HTMLCanvasElement;
-        canvas.width = workspace.width;
-        canvas.height = workspace.height;
+        let context: CanvasRenderingContext2D = canvas.getContext('2d');
+        canvas.width = workspace.width * workspace.scale;
+        canvas.height = workspace.height * workspace.scale;
+        if (workspace.hasImage) {
+            context.scale(workspace.scale, workspace.scale);
+            context.drawImage(workspace.image, 0, 0);
+        }
+
+        // let workspaceSettings: HTMLElement = document.createElement('div') as HTMLElement;
+        // workspaceSettings.classList.add('workspace-settings');
+        // workspaceSettings.innerHTML = `<select>
+        //     <option>25%</option>
+        //     <option>50%</option>
+        //     <option>75%</option>
+        //     <option>100%</option>
+        //     <option>200%</option>
+        //     <option>300%</option>
+        //     <option>400%</option>
+        // </select>`;
 
         // Add the canvases to the workspace
         workspaceArea.appendChild(transCanvas);
         workspaceArea.appendChild(canvas);
+        // workspaceArea.appendChild(workspaceSettings);
 
         // Add the workspace and tab to the document
         workspaces.appendChild(workspaceArea);
@@ -59,7 +81,7 @@ export class WorkspaceController {
 
     protected setTransImage(canvas: HTMLCanvasElement): void {
         let img = new Image();
-        img.src = '../../images/transparent.png';
+        img.src = '../../resources/images/transparent.png';
         img.onload = () => {
             let context: CanvasRenderingContext2D = canvas.getContext('2d');
             let pattern = context.createPattern(img, 'repeat');

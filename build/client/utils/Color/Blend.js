@@ -27,84 +27,81 @@
     BlendType[BlendType["Phoenix"] = 24] = "Phoenix";
 })(exports.BlendType || (exports.BlendType = {}));
 var BlendType = exports.BlendType;
-var Blend = (function () {
-    function Blend() {
-    }
-    Blend.normal = function (a, b) {
+class Blend {
+    static normal(a, b) {
         return a;
-    };
-    Blend.lighten = function (a, b) {
+    }
+    static lighten(a, b) {
         return (b > a) ? b : a;
-    };
-    Blend.darken = function (a, b) {
+    }
+    static darken(a, b) {
         return (b > a) ? a : b;
-    };
-    Blend.multiply = function (a, b) {
+    }
+    static multiply(a, b) {
         return (a * b) / 255;
-    };
-    Blend.average = function (a, b) {
+    }
+    static average(a, b) {
         return (a + b) / 2;
-    };
-    Blend.add = function (a, b) {
+    }
+    static add(a, b) {
         return Math.min(255, (a + b));
-    };
-    Blend.subtract = function (a, b) {
+    }
+    static subtract(a, b) {
         return (a + b < 255) ? 0 : (a + b - 255);
-    };
-    Blend.difference = function (a, b) {
+    }
+    static difference(a, b) {
         return Math.abs(a - b);
-    };
-    Blend.negation = function (a, b) {
+    }
+    static negation(a, b) {
         return (255 - Math.abs(255 - a - b));
-    };
-    Blend.screen = function (a, b) {
+    }
+    static screen(a, b) {
         return (255 - (((255 - a) * (255 - b)) >> 8));
-    };
-    Blend.exclusion = function (a, b) {
+    }
+    static exclusion(a, b) {
         return a + b - 2 * a * b / 255;
-    };
-    Blend.overlay = function (a, b) {
+    }
+    static overlay(a, b) {
         return (b < 128) ? (2 * a * b / 255) : (255 - 2 * (255 - a) * (255 - b) / 255);
-    };
-    Blend.softLight = function (a, b) {
+    }
+    static softLight(a, b) {
         return ((b < 128) ? (2 * ((a >> 1) + 64)) * (b / 255) : (255 - (2 * (255 - ((a >> 1) + 64)) * (255 - b) / 255)));
-    };
-    Blend.hardLight = function (a, b) {
+    }
+    static hardLight(a, b) {
         return this.overlay(b, a);
-    };
-    Blend.colorDodge = function (a, b) {
+    }
+    static colorDodge(a, b) {
         return ((b == 255) ? b : Math.min(255, ((a << 8) / (255 - b))));
-    };
-    Blend.colorBurn = function (a, b) {
+    }
+    static colorBurn(a, b) {
         return ((b == 0) ? b : Math.max(0, (255 - ((255 - a) << 8) / b)));
-    };
-    Blend.linearDodge = function (a, b) {
+    }
+    static linearDodge(a, b) {
         return this.add(a, b);
-    };
-    Blend.linearBurn = function (a, b) {
+    }
+    static linearBurn(a, b) {
         return this.subtract(a, b);
-    };
-    Blend.linearLight = function (a, b) {
+    }
+    static linearLight(a, b) {
         return (b < 128) ? this.linearBurn(a, (2 * b)) : this.linearDodge(a, (2 * (b - 128)));
-    };
-    Blend.vividLight = function (a, b) {
+    }
+    static vividLight(a, b) {
         return (b < 128) ? this.colorBurn(a, (2 * b)) : this.colorDodge(a, (2 * (b - 128)));
-    };
-    Blend.pinLight = function (a, b) {
+    }
+    static pinLight(a, b) {
         return (b < 128) ? this.darken(a, (2 * b)) : this.lighten(a, (2 * (b - 128)));
-    };
-    Blend.hardMix = function (a, b) {
+    }
+    static hardMix(a, b) {
         return ((this.vividLight(a, b) < 128) ? 0 : 255);
-    };
-    Blend.reflect = function (a, b) {
+    }
+    static reflect(a, b) {
         return ((b == 255) ? b : Math.min(255, (a * a / (255 - b))));
-    };
-    Blend.glow = function (a, b) {
+    }
+    static glow(a, b) {
         return this.reflect(b, a);
-    };
-    Blend.phoenix = function (a, b) {
+    }
+    static phoenix(a, b) {
         return (Math.min(a, b) - Math.max(a, b) + 255);
-    };
-    return Blend;
-}());
+    }
+}
 exports.Blend = Blend;

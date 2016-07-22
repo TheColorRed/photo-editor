@@ -1,7 +1,4 @@
 "use strict";
-var Layer = (function () {
-    function Layer() {
-    }
-    return Layer;
-}());
+class Layer {
+}
 exports.Layer = Layer;

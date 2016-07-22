@@ -1,6 +1,6 @@
 "use strict";
-var electron = require('electron');
-var Input_1 = require('./../utils/Input');
+const electron = require('electron');
+const Input_1 = require('../../client/utils/Input');
 var remote = electron.remote;
 var ipc = remote.ipcMain;
 var numberInputs = document.querySelectorAll('input.number');

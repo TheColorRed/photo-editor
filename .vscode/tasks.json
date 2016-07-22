@@ -4,8 +4,8 @@
     "version": "0.1.0",
     "command": "tsc",
     "isShellCommand": true,
-    "args": ["--removeComments", "--module", "commonjs", "--target", "ES5", "--outDir", "build", "--rootDir", "src"],
+    // "args": ["--removeComments", "--module", "commonjs", "--target", "ES5", "--outDir", "build", "--rootDir", "src"],
     // "args": ["--removeComments", "--module", "commonjs", "--target", "ES5", "--outDir", "build/app", "src/server/main.ts", "src/client/main.ts"],
-    "showOutput": "silent",
+    "showOutput": "always",
     "problemMatcher": "$tsc"
 }

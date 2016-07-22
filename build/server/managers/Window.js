@@ -1,21 +1,18 @@
 "use strict";
-var electron_1 = require('electron');
-var WindowManager = (function () {
-    function WindowManager() {
-    }
-    WindowManager.prototype.createWindow = function (settings) {
+const electron_1 = require('electron');
+class WindowManager {
+    createWindow(settings) {
         var newWindow = new electron_1.BrowserWindow(settings.windowSettings || {});
-        newWindow.loadURL("file://" + settings.fileName);
+        newWindow.loadURL(`file://${settings.fileName}`);
         newWindow.setAlwaysOnTop(settings.alwaysOnTop || false);
         electron_1.Menu.setApplicationMenu(electron_1.Menu.buildFromTemplate(settings.menuTemplate || []));
-        newWindow.on('closed', function () {
+        newWindow.on('closed', () => {
             newWindow = null;
         });
         return newWindow;
-    };
-    WindowManager.prototype.setMenu = function (menuTemplate) {
+    }
+    setMenu(menuTemplate) {
         electron_1.Menu.setApplicationMenu(electron_1.Menu.buildFromTemplate(menuTemplate));
-    };
-    return WindowManager;
-}());
+    }
+}
 exports.WindowManager = WindowManager;

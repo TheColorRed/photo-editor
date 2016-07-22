@@ -1,8 +1,9 @@
 "use strict";
-var Manager_1 = require('../managers/Manager');
-var shortid = require('shortid');
-var Workspace = (function () {
-    function Workspace(title, width, height) {
+const Manager_1 = require('../managers/Manager');
+const shortid = require('shortid');
+class Workspace {
+    constructor(title, width, height) {
+        this.scale = 0.5;
         this._title = '';
         this._isDirty = false;
         this._width = 1;
@@ -13,48 +14,44 @@ var Workspace = (function () {
         this._height = height;
         this._id = shortid.generate();
     }
-    Object.defineProperty(Workspace.prototype, "id", {
-        get: function () {
-            return this._id;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Workspace.prototype, "title", {
-        get: function () {
-            return this._title;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Workspace.prototype, "isDirty", {
-        get: function () {
-            return this._isDirty;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Workspace.prototype, "width", {
-        get: function () {
-            return this._width;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Workspace.prototype, "height", {
-        get: function () {
-            return this._height;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Workspace.prototype, "layers", {
-        get: function () {
-            return this._layers;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return Workspace;
-}());
+    get id() {
+        return this._id;
+    }
+    get title() {
+        return this._title;
+    }
+    get isDirty() {
+        return this._isDirty;
+    }
+    get width() {
+        return this._width;
+    }
+    get height() {
+        return this._height;
+    }
+    get layers() {
+        return this._layers;
+    }
+    get hasImage() {
+        if (this._image) {
+            return true;
+        }
+        return false;
+    }
+    get image() {
+        return this._image;
+    }
+    setImage(path) {
+        return new Promise(resolve => {
+            this._image = new Image();
+            this._image.src = path;
+            let $this = this;
+            this._image.onload = function () {
+                $this._width = $this._image.width;
+                $this._height = $this._image.height;
+                resolve(true);
+            };
+        });
+    }
+}
 exports.Workspace = Workspace;

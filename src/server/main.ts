@@ -4,6 +4,7 @@ import electron = require('electron');
 
 var app = electron.app;
 var BrowserWindow = electron.BrowserWindow;
+var dialog = electron.dialog;
 var ipc = electron.ipcMain;
 
 // import { MainMenu } from './menu';
@@ -16,7 +17,10 @@ app.on('ready', () => {
         height: 600,
         show: false
     });
-    mainWindow.loadURL(`${__dirname}/../resources/views/index.html`);
+    mainWindow.loadURL(`file://${__dirname}/../resources/views/index.html`);
+    mainWindow.on('ready', () => {
+        mainWindow.show();
+    });
     mainWindow.on('ready-to-show', () => {
         mainWindow.show();
     });
@@ -32,11 +36,23 @@ app.on('ready', () => {
             resizable: false,
             show: false
         });
-        newFileWindow.loadURL(`${__dirname}/../resources/views/newFile.html`);
+        newFileWindow.loadURL(`file://${__dirname}/../resources/views/newFile.html`);
         newFileWindow.setMenu(null);
         newFileWindow.on('ready-to-show', () => {
             newFileWindow.show();
-            newFileWindow.webContents.openDevTools();
+            // newFileWindow.webContents.openDevTools();
+        });
+    });
+
+    ipc.on('open-file', (event) => {
+        dialog.showOpenDialog(mainWindow, {
+            title: "Open Image",
+            filters: [
+                {name: 'Images', extensions: ['png', 'jpg', 'gif', 'pdd']}
+            ],
+            properties: ["multiSelections", "openFile"]
+        }, files => {
+            event.sender.send('opened-files', files);
         });
     });
 
