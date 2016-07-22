@@ -5,7 +5,7 @@ const shortid = require('shortid');
 
 export class Workspace {
 
-    public scale: number = 0.5;
+    public scale: number = 2;
 
     protected _title: string = '';
     protected _id: string;

@@ -1,7 +1,6 @@
-import electron = require('electron');
+const { remote } = require('electron');
 import { Input } from '../../client/utils/Input';
 
-var remote = electron.remote;
 var ipc = remote.ipcMain;
 
 // Lock items to numbers only

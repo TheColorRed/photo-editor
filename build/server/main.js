@@ -1,9 +1,5 @@
-"use strict";
-const electron = require('electron');
-var app = electron.app;
-var BrowserWindow = electron.BrowserWindow;
-var dialog = electron.dialog;
-var ipc = electron.ipcMain;
+const { ipcMain, app, BrowserWindow, dialog, ipcRenderer, globalShortcut } = require('electron');
+var keybindings = require('../resources/settings/keybindings.json');
 app.on('ready', () => {
     var mainWindow = new BrowserWindow({
         width: 1024,
@@ -17,7 +13,12 @@ app.on('ready', () => {
     mainWindow.on('ready-to-show', () => {
         mainWindow.show();
     });
-    ipc.on('new-file', () => {
+    keybindings.forEach(binding => {
+        globalShortcut.register(binding.key, () => {
+            mainWindow.webContents.send(binding.command);
+        });
+    });
+    ipcMain.on('new-file', () => {
         var newFileWindow = new BrowserWindow({
             width: 500,
             height: 300,
@@ -33,7 +34,7 @@ app.on('ready', () => {
             newFileWindow.show();
         });
     });
-    ipc.on('open-file', (event) => {
+    ipcMain.on('open-file', (event) => {
         dialog.showOpenDialog(mainWindow, {
             title: "Open Image",
             filters: [
@@ -44,10 +45,10 @@ app.on('ready', () => {
             event.sender.send('opened-files', files);
         });
     });
-    ipc.on('quit', () => {
+    ipcMain.on('quit', () => {
         mainWindow.close();
     });
-    ipc.on('dev-tools', () => {
+    ipcMain.on('dev-tools', () => {
         mainWindow.webContents.openDevTools();
     });
 });

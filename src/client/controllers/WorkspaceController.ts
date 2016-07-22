@@ -56,18 +56,6 @@ export class WorkspaceController {
             context.drawImage(workspace.image, 0, 0);
         }
 
-        // let workspaceSettings: HTMLElement = document.createElement('div') as HTMLElement;
-        // workspaceSettings.classList.add('workspace-settings');
-        // workspaceSettings.innerHTML = `<select>
-        //     <option>25%</option>
-        //     <option>50%</option>
-        //     <option>75%</option>
-        //     <option>100%</option>
-        //     <option>200%</option>
-        //     <option>300%</option>
-        //     <option>400%</option>
-        // </select>`;
-
         // Add the canvases to the workspace
         workspaceArea.appendChild(transCanvas);
         workspaceArea.appendChild(canvas);

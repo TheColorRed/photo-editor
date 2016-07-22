@@ -1,0 +1,10 @@
+[
+    {
+        "key": "ctrl+=",
+        "command": "workspace.zoomIn"
+    },
+    {
+        "key": "ctrl+-",
+        "command": "workspace.zoomOut"
+    }
+]

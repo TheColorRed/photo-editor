@@ -1,16 +1,20 @@
 "use strict";
-const electron = require('electron');
+const { remote, ipcRenderer } = require('electron');
 const path = require('path');
 const Workspace_1 = require('../../client/utils/Workspace');
 const Manager_1 = require('../../client/managers/Manager');
 const WorkspaceController_1 = require('../../client/controllers/WorkspaceController');
-var remote = electron.remote;
-var ipc = electron.ipcRenderer;
-var Menu = remote.Menu;
+let Menu = remote.Menu;
 let wsController = new WorkspaceController_1.WorkspaceController();
 let workspaces = new Manager_1.Manager();
 wsController.setWorkspaceManager(workspaces);
-ipc.on('opened-files', (e, files) => {
+ipcRenderer.on('workspace.zoomIn', (e) => {
+    console.log('ZoomIn');
+});
+ipcRenderer.on('workspace.zoomOut', (e) => {
+    console.log('ZoomOut');
+});
+ipcRenderer.on('opened-files', (e, files) => {
     files.forEach(file => {
         let ws = new Workspace_1.Workspace(path.basename(file));
         ws.setImage(file).then(loaded => {
@@ -22,7 +26,6 @@ ipc.on('opened-files', (e, files) => {
 var scaller = document.querySelector('.workspace-settings .scale');
 scaller.addEventListener('change', (e) => {
     var target = e.currentTarget;
-    console.log(target.value);
 });
 var menu = Menu.buildFromTemplate([
     {
@@ -32,14 +35,14 @@ var menu = Menu.buildFromTemplate([
                 label: 'New...',
                 accelerator: 'ctrl+n',
                 click: () => {
-                    ipc.send('new-file');
+                    ipcRenderer.send('new-file');
                 }
             },
             {
                 label: 'Open...',
                 accelerator: 'ctrl+o',
                 click: () => {
-                    ipc.send('open-file');
+                    ipcRenderer.send('open-file');
                 }
             },
             {
@@ -78,7 +81,7 @@ var menu = Menu.buildFromTemplate([
                 label: 'Quit',
                 accelerator: 'ctrl+q',
                 click: () => {
-                    ipc.send('quit');
+                    ipcRenderer.send('quit');
                 }
             }
         ]
@@ -124,7 +127,7 @@ var menu = Menu.buildFromTemplate([
                 label: 'Developer Tools',
                 accelerator: 'f12',
                 click: () => {
-                    ipc.send('dev-tools');
+                    ipcRenderer.send('dev-tools');
                 }
             }
         ]

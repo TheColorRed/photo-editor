@@ -3,7 +3,7 @@ const Manager_1 = require('../managers/Manager');
 const shortid = require('shortid');
 class Workspace {
     constructor(title, width, height) {
-        this.scale = 0.5;
+        this.scale = 2;
         this._title = '';
         this._isDirty = false;
         this._width = 1;

@@ -1,4 +1,6 @@
-import electron = require('electron');
+const {
+    remote, ipcRenderer
+} = require('electron');
 import path = require('path');
 
 import { Workspace } from '../../client/utils/Workspace';
@@ -6,15 +8,20 @@ import { Layers } from '../../client/utils/Layers';
 import { Manager } from '../../client/managers/Manager';
 import { WorkspaceController } from '../../client/controllers/WorkspaceController';
 
-var remote = electron.remote;
-var ipc = electron.ipcRenderer;
-var Menu = remote.Menu;
+let Menu = remote.Menu;
 
 let wsController: WorkspaceController = new WorkspaceController();
 let workspaces: Manager<Workspace> = new Manager<Workspace>();
 wsController.setWorkspaceManager(workspaces);
 
-ipc.on('opened-files', (e, files: string[]) => {
+ipcRenderer.on('workspace.zoomIn', (e) => {
+    console.log('ZoomIn');
+});
+ipcRenderer.on('workspace.zoomOut', (e) => {
+    console.log('ZoomOut');
+});
+
+ipcRenderer.on('opened-files', (e, files: string[]) => {
     files.forEach(file => {
         let ws = new Workspace(path.basename(file));
         ws.setImage(file).then(loaded => {
@@ -38,14 +45,14 @@ var menu = Menu.buildFromTemplate([
                 label: 'New...',
                 accelerator: 'ctrl+n',
                 click: () => {
-                    ipc.send('new-file');
+                    ipcRenderer.send('new-file');
                 }
             },
             {
                 label: 'Open...',
                 accelerator: 'ctrl+o',
                 click: () => {
-                    ipc.send('open-file');
+                    ipcRenderer.send('open-file');
                 }
             },
             {
@@ -84,7 +91,7 @@ var menu = Menu.buildFromTemplate([
                 label: 'Quit',
                 accelerator: 'ctrl+q',
                 click: () => {
-                    ipc.send('quit');
+                    ipcRenderer.send('quit');
                 }
             }
         ]
@@ -130,7 +137,7 @@ var menu = Menu.buildFromTemplate([
                 label: 'Developer Tools',
                 accelerator: 'f12',
                 click: () => {
-                    ipc.send('dev-tools');
+                    ipcRenderer.send('dev-tools');
                 }
             }
         ]

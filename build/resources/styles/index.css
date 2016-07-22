@@ -29,7 +29,7 @@ canvas.transparent{
 
 .areas {
     background-color: #424242;
-    right: 25%;
+    right: 20%;
     left: 35px;
     margin: auto;
     position: absolute;
@@ -58,7 +58,8 @@ canvas.transparent{
 .pallets {
     background-color: #535353;
     right: 0;
-    left: 75%;
+    width: 20%;
+    min-width: 250px;
     top: 0;
     bottom: 0;
     margin: auto;
