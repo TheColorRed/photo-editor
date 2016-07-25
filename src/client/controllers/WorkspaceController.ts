@@ -1,15 +1,16 @@
 import { Workspace } from '../utils/Workspace';
 import { Manager } from '../managers/Manager';
+import { globals } from '../../client/utils/global';
 
 export class WorkspaceController {
 
-    protected wsManager: Manager<Workspace>;
+    protected static _workspaces: Manager<Workspace> = new Manager<Workspace>();
 
-    public setWorkspaceManager(wsManager: Manager<Workspace>) {
-        this.wsManager = wsManager;
+    public static get workspaces(): Manager<Workspace> {
+        return WorkspaceController._workspaces;
     }
 
-    public createWorkspace(workspace: Workspace) {
+    public static createWorkspace(workspace: Workspace) {
         let tabs: HTMLElement = document.querySelector('section.areas div.tabs') as HTMLElement;
         let workspaces: HTMLElement = document.querySelector('section.areas div.workspaces') as HTMLElement;
 
@@ -19,19 +20,6 @@ export class WorkspaceController {
         workspaceTab.setAttribute('data-id', workspace.id);
         workspaceTab.innerHTML = `<span>${workspace.title}</span><span><i class="fa fa-close"></i></span>`;
         var $this = this;
-        workspaceTab.addEventListener('click', (e) => {
-            let target: HTMLAnchorElement = e.currentTarget as HTMLAnchorElement;
-            if (e.button == 1) {
-                $this.removeWorkspace(target.getAttribute('data-id'));
-            } else {
-                $this.focusWorkspace(target.getAttribute('data-id'));
-            }
-        });
-        workspaceTab.querySelector('span:last-child').addEventListener('click', (e) => {
-            e.stopPropagation();
-            var target = e.currentTarget as HTMLElement;
-            $this.removeWorkspace(target.parentElement.getAttribute('data-id'));
-        });
 
         // Create the workspace
         let workspaceArea: HTMLDivElement = document.createElement('div') as HTMLDivElement;
@@ -39,46 +27,17 @@ export class WorkspaceController {
         workspaceArea.classList.add('workspace-area');
         workspaceArea.setAttribute('data-id', workspace.id);
 
-        // Create the workspace transparent canvas
-        let transCanvas: HTMLCanvasElement = document.createElement('canvas') as HTMLCanvasElement;
-        transCanvas.width = workspace.width * workspace.scale;
-        transCanvas.height = workspace.height * workspace.scale;
-        transCanvas.classList.add('transparent');
-        this.setTransImage(transCanvas);
-
-        // Create the workspace master canvas
-        let canvas: HTMLCanvasElement = document.createElement('canvas') as HTMLCanvasElement;
-        let context: CanvasRenderingContext2D = canvas.getContext('2d');
-        canvas.width = workspace.width * workspace.scale;
-        canvas.height = workspace.height * workspace.scale;
-        if (workspace.hasImage) {
-            context.scale(workspace.scale, workspace.scale);
-            context.drawImage(workspace.image, 0, 0);
-        }
-
-        // Add the canvases to the workspace
-        workspaceArea.appendChild(transCanvas);
-        workspaceArea.appendChild(canvas);
-        // workspaceArea.appendChild(workspaceSettings);
+        // Initialize the workspace
+        workspace.init(workspaceTab, workspaceArea);
 
         // Add the workspace and tab to the document
         workspaces.appendChild(workspaceArea);
         tabs.appendChild(workspaceTab);
-        this.focusWorkspace(workspace.id);
+        WorkspaceController.workspaces.add(workspace);
+        WorkspaceController.focusWorkspace(workspace.id);
     }
 
-    protected setTransImage(canvas: HTMLCanvasElement): void {
-        let img = new Image();
-        img.src = '../../resources/images/transparent.png';
-        img.onload = () => {
-            let context: CanvasRenderingContext2D = canvas.getContext('2d');
-            let pattern = context.createPattern(img, 'repeat');
-            context.fillStyle = pattern;
-            context.fillRect(0, 0, canvas.width, canvas.height);
-        }
-    }
-
-    protected focusWorkspace(id: string) {
+    public static focusWorkspace(id: string) {
         // Deactivate all the tabs
         let tabs = document.querySelectorAll('.workspace-tab') as NodeListOf<HTMLAnchorElement>;
         for (let i = 0; i < tabs.length; i++){
@@ -98,12 +57,20 @@ export class WorkspaceController {
         let wst = document.querySelector(`.workspace-tab[data-id="${id}"]`) as HTMLElement;
         wsa.classList.remove('hidden');
         wst.classList.add('active');
+        window.dispatchEvent(new CustomEvent('onWorkspaceChange', { detail: id }));
     }
 
-    public removeWorkspace(id: string) {
-        for (var i in this.wsManager.items) {
-            var item = this.wsManager.items[i];
+    public static removeWorkspaces(ids: string[]) {
+        ids.forEach(id => {
+            WorkspaceController.removeWorkspace(id);
+        });
+    }
+
+    public static removeWorkspace(id: string) {
+        for (let i in this.workspaces.items) {
+            let item: Workspace = this.workspaces.items[i] || null;
             if (item.id == id) {
+                let itemNext: Workspace = this.workspaces.items[i + 1] || null;
                 if (item.isDirty) {
                     alert('Workspace is dirty');
                     return;
@@ -114,7 +81,15 @@ export class WorkspaceController {
                 wsa.parentNode.removeChild(wsa);
                 wst.parentNode.removeChild(wst);
                 // Remove the workspace from the workspace manager
-                this.wsManager.remove(item);
+                this.workspaces.remove(item);
+                if (itemNext) {
+                    this.focusWorkspace(itemNext.id);
+                } else {
+                    let firstItem: Workspace = this.workspaces.items[0] || null;
+                    if (firstItem) {
+                        this.focusWorkspace(firstItem.id);
+                    }
+                }
                 return;
             }
         }

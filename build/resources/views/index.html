@@ -20,7 +20,8 @@
         <div class="tabs"></div>
         <div class="workspaces"></div>
         <div class="workspace-settings">
-            <select class="scale">
+            <input type="text" id="scale" style="width: 50px;" class="number">
+            <select id="scale-presets" class="hidden">
                 <option value=".25">25%</option>
                 <option value=".50">50%</option>
                 <option value=".75">75%</option>
@@ -28,12 +29,12 @@
                 <option value="2">200%</option>
                 <option value="3">300%</option>
                 <option value="4">400%</option>
-                <option value="5">400%</option>
+                <option value="5">500%</option>
             </select>
         </div>
     </section>
     <section class="pallets">
-        <div class="layers">
+        <div id="layers">
 
         </div>
     </section>

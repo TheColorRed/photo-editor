@@ -4,7 +4,7 @@ section {
     float: left;
 }
 
-canvas {
+.workspace-area canvas {
     right: 0;
     left: 0;
     top: 0;
@@ -14,7 +14,7 @@ canvas {
     z-index: 0;
 }
 
-canvas.transparent{
+.workspace-area canvas.transparent{
     box-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
 
@@ -100,7 +100,7 @@ a.workspace-tab {
     background-color: #2c2c2c;
     padding: 5px;
     min-width: 100px;
-    /*border: solid 1px #1c1c1c;*/
+    border: solid 1px #1c1c1c;
     cursor: pointer;
     border-top: solid 2px #5a5a5a;
     height: 35px;
@@ -108,7 +108,9 @@ a.workspace-tab {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    box-shadow: 1px 1px 6px 2px rgba(0,0,0,0.5)
+    /*box-shadow: 1px 1px 6px 2px rgba(0,0,0,0.5);*/
+    position: relative;
+    padding-right: 30px;
 }
 
 a.workspace-tab.active {
@@ -123,6 +125,9 @@ a.workspace-tab > span:first-child {
 a.workspace-tab:hover span:last-child,
 a.workspace-tab.active span:last-child {
     display: inline-block;
+    position: absolute;
+    right: 5px;
+    background-color: #2c2c2c;
 }
 
 a.workspace-tab > span:last-child {
@@ -134,4 +139,21 @@ a.workspace-tab > span:last-child {
 }
 a.workspace-tab > span:last-child:hover {
     background: #1c1c1c;
+}
+
+div.layers-layer {
+    display: table;
+    padding: 5px;
+    height: 50px;
+    background-color: #434343;
+    cursor: pointer;
+    width: 100%;
+}
+
+div.layers-layer div.preview {
+    width: 65px;
+}
+div.layers-layer div {
+    display: table-cell;
+    vertical-align: middle;
 }
