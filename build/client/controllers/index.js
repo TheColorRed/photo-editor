@@ -99,7 +99,7 @@ window.addEventListener('onCloseDirtyWorkspaces', (event) => {
     });
     WorkspaceController_1.WorkspaceController.removeWorkspaces(ids);
 });
-ipcRenderer.on('save', (e, pathInfo) => {
+ipcRenderer.on('save-as', (e, pathInfo) => {
     if (global_1.globals.activeWorkspace) {
         e.sender.send('save-data', { pathInfo: pathInfo, content: global_1.globals.activeWorkspace.save(pathInfo) });
     }
