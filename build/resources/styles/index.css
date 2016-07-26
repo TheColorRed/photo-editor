@@ -19,7 +19,7 @@ section {
 }
 
 .tools {
-    background-color: #535353;
+    background-color: #444;
     padding: 3px;
     width: 35px;
     box-shadow: 1px 0 5px rgba(0,0,0,0.5);
@@ -28,8 +28,8 @@ section {
 }
 
 .areas {
-    background-color: #424242;
-    right: 20%;
+    background-color: #333;
+    right: 300px;
     left: 35px;
     margin: auto;
     position: absolute;
@@ -56,30 +56,49 @@ section {
 }
 
 .pallets {
-    background-color: #535353;
-    right: 0;
-    width: 20%;
-    min-width: 250px;
+    background-color: #444;
+    right: 50px;
+    width: 250px;
     top: 0;
     bottom: 0;
     margin: auto;
     box-shadow: -1px 0 5px rgba(0,0,0,0.5);
     position: absolute;
     z-index: 1;
+    text-align: center;
+    padding-top: 5px;
 }
 
-.tools > i {
+.pallet-toggles {
+    position: absolute;
+    right: 0;
+    height: 100vh;
+    z-index: 2;
+    width: 50px;
+    background-color: #555;
+    font-size: 2em;
+    box-shadow: -1px 0 5px rgba(0,0,0,0.5);
+    text-align: center;
+    padding-top: 5px;
+}
+
+
+.tools > i, .pallet-toggles > i {
     padding: 6px;
     border-radius: 3px;
     border: solid 1px transparent;
     margin-bottom: 2px;
     width: 30px;
 }
-.tools > i:hover {
+.tools > i:hover, .pallet-toggles > i:hover {
     border: solid 1px #2d2d2d;
 }
 
-.tools > i.selected {
+.pallet-toggles i {
+    width: 42px;
+}
+
+.tools > i.selected, .pallet-toggles > i.selected {
     border: solid 1px #2d2d2d;
     box-shadow: inset 0px 1px 1px rgba(0,0,0,0.5);
     background: linear-gradient(to bottom, #464646 0%,#424242 50%,#3c3c3c 100%);

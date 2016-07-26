@@ -1,4 +1,7 @@
-const { ipcMain, app, BrowserWindow, dialog, ipcRenderer, globalShortcut } = require('electron');
+"use strict";
+const { ipcMain, app, BrowserWindow, dialog, globalShortcut } = require('electron');
+const fs = require('fs');
+const path = require('path');
 let keybindings = require('../resources/settings/keybindings.json');
 let mainWindow;
 let newFileWindow;
@@ -45,6 +48,25 @@ ipcMain.on('new-file', () => {
         newFileWindow = null;
     });
 });
+ipcMain.on('save-as', () => {
+    dialog.showSaveDialog(mainWindow, {
+        title: 'Save Image',
+        filters: [
+            { name: '.png', extensions: ['png'] },
+            { name: '.jpg', extensions: ['jpeg', 'jpg'] },
+        ]
+    }, filename => {
+        let ext = filename.substr(filename.lastIndexOf('.') + 1);
+        mainWindow.webContents.send('save', path.parse(filename));
+    });
+});
+ipcMain.on('save-data', (e, data) => {
+    fs.writeFile(path.format(data.pathInfo), data.content.replace(/.+?,/, ''), 'base64', (err) => {
+        if (err) {
+            console.log(err);
+        }
+    });
+});
 ipcMain.on('new-file-create', (event, settings) => {
     mainWindow.webContents.send('new-file', settings);
     if (newFileWindow) {
@@ -59,7 +81,7 @@ ipcMain.on('open-file', (event) => {
         ],
         properties: ["multiSelections", "openFile"]
     }, files => {
-        if (files && files.length > 1) {
+        if (files && files.length > 0) {
             event.sender.send('opened-files', files);
         }
     });

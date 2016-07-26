@@ -3,7 +3,7 @@ import { WorkspaceController } from '../../client/controllers/WorkspaceControlle
 import { Layer } from './Layer';
 import { globals } from '../../client/utils/global';
 
-const { remote } = require('electron');
+import { remote, ipcRenderer } from 'electron';
 import cp = require('child_process');
 import path = require('path');
 let Menu = remote.Menu;
@@ -271,4 +271,15 @@ export class Workspace {
         });
     }
 
+    public save(path: path.ParsedPath): string {
+        let type = path.ext.replace('.', '');
+        // console.log(path.ext);
+        // return '';
+        // var canvasData = this.canvas.toDataURL('image/png');
+        return this.canvas.toDataURL(`image/${type}`);//.getContext('2d').getImageData(0, 0, this.width, this.height);
+        // ipcRenderer.send('save-data', canvasData);
+    }
+
 }
+
+export enum ImageTypes { png, jpg }

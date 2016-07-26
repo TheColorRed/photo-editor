@@ -9,14 +9,14 @@ var menu = Menu.buildFromTemplate([
                 label: 'New...',
                 accelerator: 'ctrl+n',
                 click: () => {
-                    ipcRenderer.send('new-file');
+                    electron_1.ipcRenderer.send('new-file');
                 }
             },
             {
                 label: 'Open...',
                 accelerator: 'ctrl+o',
                 click: () => {
-                    ipcRenderer.send('open-file');
+                    electron_1.ipcRenderer.send('open-file');
                 }
             },
             {
@@ -42,11 +42,17 @@ var menu = Menu.buildFromTemplate([
             },
             {
                 label: 'Save',
-                accelerator: 'ctrl+s'
+                accelerator: 'ctrl+s',
+                click: () => {
+                    electron_1.ipcRenderer.send('save');
+                }
             },
             {
                 label: 'Save As...',
-                accelerator: 'ctrl+shift+s'
+                accelerator: 'ctrl+shift+s',
+                click: () => {
+                    electron_1.ipcRenderer.send('save-as');
+                }
             },
             {
                 type: 'separator'
@@ -55,7 +61,7 @@ var menu = Menu.buildFromTemplate([
                 label: 'Quit',
                 accelerator: 'ctrl+q',
                 click: () => {
-                    ipcRenderer.send('quit');
+                    electron_1.ipcRenderer.send('quit');
                 }
             }
         ]
@@ -86,7 +92,7 @@ var menu = Menu.buildFromTemplate([
                 label: 'Paste',
                 accelerator: 'ctrl+v',
                 click: () => {
-                    ipcRenderer.send('workspace-paste');
+                    electron_1.ipcRenderer.send('workspace-paste');
                 }
             },
             {
@@ -102,8 +108,7 @@ var menu = Menu.buildFromTemplate([
     },
     {
         label: 'Layer',
-        submenu: [
-            {
+        submenu: [, {
                 label: 'Colors',
                 submenu: [
                     {
@@ -141,13 +146,68 @@ var menu = Menu.buildFromTemplate([
         label: 'Filters'
     },
     {
+        label: 'Components',
+        submenu: [
+            {
+                label: 'Post Processing Effects',
+                submenu: [
+                    {
+                        label: 'Bloom'
+                    },
+                    {
+                        label: 'Glow'
+                    },
+                    {
+                        label: 'Motion Blur'
+                    },
+                    {
+                        label: 'Smart Blur'
+                    },
+                    {
+                        label: 'Film Grain'
+                    },
+                    {
+                        label: 'Grayscale'
+                    },
+                    {
+                        label: 'Infrared'
+                    },
+                    {
+                        label: 'Nightvision'
+                    },
+                    {
+                        label: 'Depth of field'
+                    },
+                    {
+                        label: 'Color correction'
+                    },
+                    {
+                        label: 'Vignette'
+                    },
+                    {
+                        label: 'Posterization'
+                    },
+                    {
+                        label: 'Fog'
+                    },
+                    {
+                        label: 'Mist'
+                    }
+                ]
+            },
+            {
+                label: 'Watermark'
+            }
+        ]
+    },
+    {
         label: 'Help',
         submenu: [
             {
                 label: 'Developer Tools',
                 accelerator: 'f12',
                 click: () => {
-                    ipcRenderer.send('dev-tools');
+                    electron_1.ipcRenderer.send('dev-tools');
                 }
             }
         ]

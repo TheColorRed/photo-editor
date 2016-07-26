@@ -3,9 +3,9 @@ const Manager_1 = require('../managers/Manager');
 const WorkspaceController_1 = require('../../client/controllers/WorkspaceController');
 const Layer_1 = require('./Layer');
 const global_1 = require('../../client/utils/global');
-const { remote } = require('electron');
+const electron_1 = require('electron');
 const cp = require('child_process');
-let Menu = remote.Menu;
+let Menu = electron_1.remote.Menu;
 const tabMenu = require('../../client/menus/workspaceTab');
 const shortid = require('shortid');
 class Workspace {
@@ -197,7 +197,7 @@ class Workspace {
     }
     pasteToLayer() {
         return new Promise(resolve => {
-            var fk = cp.fork('./build/client/processes/getClipboardImage.js', [], { cwd: __dirname + '/../../../' });
+            var fk = cp.fork('./client/processes/getClipboardImage.js', [], { cwd: __dirname + '/../../' });
             fk.on('got-string', (err, out) => {
                 if (err) {
                     throw err;
@@ -215,5 +215,14 @@ class Workspace {
             });
         });
     }
+    save(path) {
+        let type = path.ext.replace('.', '');
+        return this.canvas.toDataURL(`image/${type}`);
+    }
 }
 exports.Workspace = Workspace;
+(function (ImageTypes) {
+    ImageTypes[ImageTypes["png"] = 0] = "png";
+    ImageTypes[ImageTypes["jpg"] = 1] = "jpg";
+})(exports.ImageTypes || (exports.ImageTypes = {}));
+var ImageTypes = exports.ImageTypes;

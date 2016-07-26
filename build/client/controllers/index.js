@@ -99,8 +99,13 @@ window.addEventListener('onCloseDirtyWorkspaces', (event) => {
     });
     WorkspaceController_1.WorkspaceController.removeWorkspaces(ids);
 });
+ipcRenderer.on('save', (e, pathInfo) => {
+    if (global_1.globals.activeWorkspace) {
+        e.sender.send('save-data', { pathInfo: pathInfo, content: global_1.globals.activeWorkspace.save(pathInfo) });
+    }
+});
 ipcRenderer.on('opened-files', (e, files) => {
-    if (files) {
+    if (files && files.length > 0) {
         files.forEach(file => {
             let ws = new Workspace_1.Workspace(path.basename(file));
             ws.setImage(file).then(loaded => {

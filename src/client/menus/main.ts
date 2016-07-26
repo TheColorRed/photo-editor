@@ -1,4 +1,4 @@
-import { remote } from 'electron';
+import { remote, ipcRenderer } from 'electron';
 let Menu = remote.Menu;
 
 var menu = Menu.buildFromTemplate([
@@ -42,11 +42,17 @@ var menu = Menu.buildFromTemplate([
             },
             {
                 label: 'Save',
-                accelerator: 'ctrl+s'
+                accelerator: 'ctrl+s',
+                click: () => {
+                    ipcRenderer.send('save');
+                }
             },
             {
                 label: 'Save As...',
-                accelerator: 'ctrl+shift+s'
+                accelerator: 'ctrl+shift+s',
+                click: () => {
+                    ipcRenderer.send('save-as');
+                }
             },
             {
                 type: 'separator'
@@ -102,8 +108,7 @@ var menu = Menu.buildFromTemplate([
     },
     {
         label: 'Layer',
-        submenu: [
-            {
+        submenu: [,            {
                 label: 'Colors',
                 submenu: [
                     {
@@ -139,6 +144,61 @@ var menu = Menu.buildFromTemplate([
     },
     {
         label: 'Filters'
+    },
+    {
+        label: 'Components',
+        submenu: [
+            {
+                label: 'Post Processing Effects',
+                submenu: [
+                    {
+                        label: 'Bloom'
+                    },
+                    {
+                        label: 'Glow'
+                    },
+                    {
+                        label: 'Motion Blur'
+                    },
+                    {
+                        label: 'Smart Blur'
+                    },
+                    {
+                        label: 'Film Grain'
+                    },
+                    {
+                        label: 'Grayscale'
+                    },
+                    {
+                        label: 'Infrared'
+                    },
+                    {
+                        label: 'Nightvision'
+                    },
+                    {
+                        label: 'Depth of field'
+                    },
+                    {
+                        label: 'Color correction'
+                    },
+                    {
+                        label: 'Vignette'
+                    },
+                    {
+                        label: 'Posterization'
+                    },
+                    {
+                        label: 'Fog'
+                    },
+                    {
+                        label: 'Mist'
+                    }
+                ]
+            },
+            {
+                label: 'Watermark'
+            }
+        ]
     },
     {
         label: 'Help',

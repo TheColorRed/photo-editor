@@ -1,0 +1,20 @@
+@font-face {
+    font-family: EditorIcons;
+    src: url(../fonts/EditorIcons.ttf);
+}
+
+.ef {
+    display: inline-block;
+    font: normal normal normal 14px/1 EditorIcons;
+    font-size: inherit;
+    text-rendering: auto;
+}
+.ef-components:before {
+    content: "\0100";
+}
+.ef-layers:before {
+    content: "\0101";
+}
+.ef-colors:before {
+    content: "\0102";
+}

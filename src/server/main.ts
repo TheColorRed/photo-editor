@@ -1,8 +1,11 @@
 /// <reference path="../../typings/github-electron/github-electron.d.ts" />
 
 const {
-    ipcMain, app, BrowserWindow, dialog, ipcRenderer, globalShortcut
+    ipcMain, app, BrowserWindow, dialog, globalShortcut
 } = require('electron');
+
+import fs = require('fs');
+import path = require('path');
 
 let keybindings: Array<{
     key: string,
@@ -75,6 +78,29 @@ ipcMain.on('new-file', () => {
     });
 });
 
+ipcMain.on('save-as', () => {
+    dialog.showSaveDialog(mainWindow, {
+        title: 'Save Image',
+        filters: [
+            { name: '.png', extensions: ['png'] },
+            { name: '.jpg', extensions: ['jpeg', 'jpg'] },
+        ]
+    }, filename => {
+        if (filename) {
+            let ext = filename.substr(filename.lastIndexOf('.') + 1);
+            mainWindow.webContents.send('save-as', path.parse(filename));
+        }
+    });
+});
+
+ipcMain.on('save-data', (e, data: {pathInfo: path.ParsedPath, content: string}) => {
+    fs.writeFile(path.format(data.pathInfo), data.content.replace(/.+?,/, ''), 'base64', (err) => {
+        if (err) {
+            console.log(err);
+        }
+    });
+});
+
 // Close the file window when the 'OK' button is pressed
 ipcMain.on('new-file-create', (event, settings) => {
     mainWindow.webContents.send('new-file', settings);
@@ -94,7 +120,7 @@ ipcMain.on('open-file', (event) => {
         ],
         properties: ["multiSelections", "openFile"]
     }, files => {
-        if (files && files.length > 1) {
+        if (files && files.length > 0) {
             event.sender.send('opened-files', files);
         }
     });
